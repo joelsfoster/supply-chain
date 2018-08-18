@@ -64,15 +64,17 @@ contract SupplyChain {
   /* For each of the following modifiers, use what you learned about modifiers
    to give them functionality. For example, the forSale modifier should require
    that the item with the given sku has the state ForSale. */
-  modifier forSale(uint _sku) { require (items[_sku].State == ForSale) _; }
-  modifier sold(uint _sku) { require (items[_sku].State == Sold) _; }
-  modifier shipped(uint _sku) { require (items[_sku].State == Shipped) _; }
-  modifier received(uint _sku) { require (items[_sku].State == Received) _; }
+  modifier forSale(uint _sku) { require (items[_sku].state == State.ForSale) _; }
+  modifier sold(uint _sku) { require (items[_sku].state == State.Sold) _; }
+  modifier shipped(uint _sku) { require (items[_sku].state == State.Shipped) _; }
+  modifier received(uint _sku) { require (items[_sku].state == State.Received) _; }
 
 
   constructor() public {
     /* Here, set the owner as the person who instantiated the contract
        and set your skuCount to 0. */
+    owner = msg.sender;
+    skuCount = 0;
   }
 
   function addItem(string _name, uint _price) public {
@@ -87,9 +89,15 @@ contract SupplyChain {
     if the buyer paid enough, and check the value after the function is called to make sure the buyer is
     refunded any excess ether sent. Remember to call the event associated with this function!*/
 
-  function buyItem(uint sku)
-    public
-  {}
+  function buyItem(uint _sku) public payable forSale(_sku) paidEnough(items[_sku].price) {
+    Item item = items.[_sku];
+    item.seller.transfer(item.price);
+    item.buyer = msg.sender;
+    item.state = State.Sold;
+    if (msg.value > item.price) {
+      buyer.transfer(msg.value - item.price);
+    }
+  }
 
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
   is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
