@@ -99,16 +99,16 @@ contract SupplyChain {
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
   is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
   function shipItem(uint _sku) public sold(_sku) verifyCaller(items[_sku].seller) {
-    Item item = items.[_sku];
-    item.state = State.Shipped;
+    items.[_sku].state = State.Shipped;
     emit Shipped(_sku);
   }
 
   /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function
   is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
-  function receiveItem(uint sku)
-    public
-  {}
+  function receiveItem(uint _sku) public shipped(_sku) verifyCaller(items[_sku].buyer) {
+    items.[_sku].state = State.Received;
+    emit Received(_sku);
+  }
 
   /* We have these functions completed so we can run tests, just ignore it :) */
   function fetchItem(uint _sku) public view returns (string name, uint sku, uint price, uint state, address seller, address buyer) {
