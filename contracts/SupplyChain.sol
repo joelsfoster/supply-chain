@@ -50,7 +50,7 @@ contract SupplyChain {
 
   /* Create a modifer that checks if the msg.sender is the owner of the contract */
   modifier verifyOwner() { require (msg.sender == owner) _; }
-  
+
   modifier verifyCaller (address _address) { require (msg.sender == _address); _;}
   modifier paidEnough(uint _price) { require(msg.value >= _price); _;}
   modifier checkValue(uint _sku) {
@@ -64,10 +64,10 @@ contract SupplyChain {
   /* For each of the following modifiers, use what you learned about modifiers
    to give them functionality. For example, the forSale modifier should require
    that the item with the given sku has the state ForSale. */
-  modifier forSale
-  modifier sold
-  modifier shipped
-  modifier received
+  modifier forSale(uint _sku) { require (items[_sku].State == ForSale) _; }
+  modifier sold(uint _sku) { require (items[_sku].State == Sold) _; }
+  modifier shipped(uint _sku) { require (items[_sku].State == Shipped) _; }
+  modifier received(uint _sku) { require (items[_sku].State == Received) _; }
 
 
   constructor() public {
