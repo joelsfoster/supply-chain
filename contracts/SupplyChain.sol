@@ -43,6 +43,7 @@ contract SupplyChain {
 
   /* Create 4 events with the same name as each possible State (see above)
     Each event should accept one argument, the sku */
+  /// @dev Note that changing these arguments affected the string parsing of the tests!
   event ForSale(uint _sku);
   event Sold(uint _sku);
   event Shipped(uint _sku);
