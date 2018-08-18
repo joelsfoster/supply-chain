@@ -43,10 +43,10 @@ contract SupplyChain {
 
   /* Create 4 events with the same name as each possible State (see above)
     Each event should accept one argument, the sku */
-  event ForSale(uint sku);
-  event Sold(uint sku);
-  event Shipped(uint sku);
-  event Received(uint sku);
+  event ForSale(uint _sku);
+  event Sold(uint _sku);
+  event Shipped(uint _sku);
+  event Received(uint _sku);
 
   /* Create a modifer that checks if the msg.sender is the owner of the contract */
   modifier verifyOwner() { require (msg.sender == owner) _; }
@@ -89,21 +89,20 @@ contract SupplyChain {
     if the buyer paid enough, and check the value after the function is called to make sure the buyer is
     refunded any excess ether sent. Remember to call the event associated with this function!*/
 
-  function buyItem(uint _sku) public payable forSale(_sku) paidEnough(items[_sku].price) {
+  function buyItem(uint _sku) public payable forSale(_sku) paidEnough(items[_sku].price) checkValue(_sku) {
     Item item = items.[_sku];
     item.seller.transfer(item.price);
     item.buyer = msg.sender;
     item.state = State.Sold;
-    if (msg.value > item.price) {
-      buyer.transfer(msg.value - item.price);
-    }
   }
 
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
   is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
-  function shipItem(uint sku)
-    public
-  {}
+  function shipItem(uint _sku) public sold(_sku) verifyCaller(items[_sku].seller) {
+    Item item = items.[_sku];
+    item.state = State.Shipped;
+    emit Shipped(_sku);
+  }
 
   /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function
   is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
